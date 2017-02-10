@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout1" />
+    <TextView
+        android:text="Start LAN"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="99.5dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView1"
+        android:layout_marginLeft="140.0dp"
+        android:layout_marginRight="0.0dp" />
+    <TextView
+        android:text="LAN Password:"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2"
+        android:layout_marginTop="80.0dp" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/lanPswd_tf" />
+    <Button
+        android:text="Enter"
+        android:layout_width="180.5dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/lanEnter_btn" />
+</LinearLayout>

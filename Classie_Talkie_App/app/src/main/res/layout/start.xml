@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:text="Student"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/studentOption"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="104dp"
+            android:height="100.0dp"
+            android:width="125.0dp"
+            android:layout_below="@+id/editText"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:text="Professor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/profOption"
+            android:layout_marginRight="37dp"
+            android:layout_marginEnd="37dp"
+            android:width="125.0dp"
+            android:height="100.0dp"
+            android:layout_alignBaseline="@+id/studentOption"
+            android:layout_alignBottom="@+id/studentOption"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:text="Select User Type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView4"
+            android:fontFamily="casual"
+            android:textSize="24sp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="29dp" />
+    </RelativeLayout>
+</LinearLayout>
