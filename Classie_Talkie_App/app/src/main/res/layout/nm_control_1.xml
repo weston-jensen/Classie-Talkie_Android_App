@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:text="Mute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="132dp"
+            android:id="@+id/unmute_btn" />
+
+        <Button
+            android:text="Restart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@+id/unmute_btn"
+            android:layout_marginEnd="18dp"
+            android:layout_marginBottom="117dp"
+            android:id="@+id/end_lan_btn2" />
+
+        <Button
+            android:text="Shutdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/end_lan_btn2"
+            android:layout_toEndOf="@+id/unmute_btn"
+            android:id="@+id/shutdown_btn_1" />
+
+        <TextView
+            android:text="Network Control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="26dp"
+            android:id="@+id/textView8"
+            android:textSize="24sp" />
+    </RelativeLayout>
+</LinearLayout>

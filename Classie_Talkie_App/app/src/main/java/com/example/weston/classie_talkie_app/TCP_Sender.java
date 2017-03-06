@@ -1,5 +1,7 @@
 package com.example.weston.classie_talkie_app;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -10,64 +12,76 @@ import java.util.Queue;
  */
 
 public class TCP_Sender {
+    private static String TAG = "AudioClient";
     private Socket _socket;
-    private Queue<Message> _sendQueue;
+    private Queue<String> _sendQueue;
     private ObjectOutputStream _outToServer;
     private boolean _running = true;
 
-    public TCP_Sender(Socket socket, Queue<Message> sendQueue)
+    public TCP_Sender(Socket socket, Queue<String> sendQueue)
     {
         this._socket = socket;
         this._sendQueue = sendQueue;
 
         try{
             this._outToServer = new ObjectOutputStream(this._socket.getOutputStream());
-            System.out.print("_OutToServer is initiaited");
         }catch(IOException e){
             System.out.print("_OutToServer failed to initiaitize");
             e.printStackTrace();
         }
     }
 
-    public void check()
-    {
-        //while(_running)
-        {
-            if(!this._sendQueue.isEmpty())
-            {
+    public void check() {
+        Thread senderThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (_running) {
+                    if (!_sendQueue.isEmpty()) {
+                        try {
+                            //Message m = new Message();
+                            //m = _sendQueue.remove();
+
+                            String m = _sendQueue.remove();
+                            _outToServer.writeObject(m);
+                            _outToServer.flush();
+
+                            /*Log.i(TAG, "Checkinging for messages to send " + m.getMesgID());
+
+                            Log.i(TAG, "FirstName = " + m.getFname());
+                            Log.i(TAG, "LastName = " + m.getLname());
+                            Log.i(TAG, "ANumber = " + m.getaNum());
+                            Log.i(TAG, "Password = " + m.getLANPass());
+                            _outToServer.flush();
+
+
+                            if (m.mesgStatus < 0) {
+                                // reliableSend(m);
+                                _outToServer.writeObject(m);
+                                _outToServer.flush();
+                            } else {
+                                _outToServer.writeObject(m);
+                                _outToServer.flush();
+                            }
+                            */
+
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
                 try {
-                    Message m = new Message();
-                    m = this._sendQueue.remove();
-
-                    if(m.mesgStatus<0)
-                    {
-                       // reliableSend(m);
-                        this._outToServer.writeObject(m);
-                        this._outToServer.flush();
+                    if (!_socket.isClosed()) {
+                        _socket.close();
                     }
-                    else
-                    {
-                        this._outToServer.writeObject(m);
-                        this._outToServer.flush();
-                    }
-
-
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-        }
 
-       /* try {
-            if(!this._socket.isClosed())
-            {
-                this._socket.close();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
+        });
+        senderThread.start();
     }
 /*
     private void reliableSend(Message m)

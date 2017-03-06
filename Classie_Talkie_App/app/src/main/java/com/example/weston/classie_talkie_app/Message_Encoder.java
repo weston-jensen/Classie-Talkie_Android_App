@@ -1,12 +1,41 @@
 package com.example.weston.classie_talkie_app;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by Weston on 2/7/2017.
  */
 
 public class Message_Encoder {
 
-    public Message AuthenticateManager(byte[] password, String message, byte[] ID, int status)
+    public String turnToJson(Message m)
+    {
+        JSONObject jsonObject= new JSONObject();
+        try
+        {
+            jsonObject.put("mesgID", m.getMesgID());
+            jsonObject.put("mesgStatus",m.getMesgStatus());
+            jsonObject.put("managerID", m.getManagerID());
+            jsonObject.put("clientID", m.getClientID());
+            jsonObject.put("serverPass", m.getServerPass());
+            jsonObject.put("clientNUM", m.getClientNUM());
+            jsonObject.put("LANPass",m.getLANPass() );
+            jsonObject.put("aNum", m.getaNum());
+            jsonObject.put("fname", m.getFname());
+            jsonObject.put("lname", m.getLname());
+            jsonObject.put("participation",m.getParticipation());
+            jsonObject.put("message", m.getMessage());
+
+            return jsonObject.toString();
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return " ";
+        }
+    }
+
+    public String AuthenticateManager(String password, String message, int ID, int status)
     {
         Message m = new Message();
         m.setMesgID(0);
@@ -15,10 +44,10 @@ public class Message_Encoder {
         m.setManagerID(ID);
         m.setMesgStatus(status);
 
-        return m;
+        return turnToJson(m);
     }
 
-    public Message CreateLAN(byte[] ID, String netPassword, int status)
+    public String CreateLAN(int ID, String netPassword, int status)
     {
         Message m = new Message();
         m.setMesgID(1);
@@ -26,20 +55,20 @@ public class Message_Encoder {
         m.setLANPass(netPassword);
         m.setMesgStatus(status);
 
-        return m;
+        return turnToJson(m);
     }
 
-    public Message EndLAN(byte[] ID, int status)
+    public String EndLAN(int ID, int status)
     {
         Message m = new Message();
         m.setMesgID((2));
         m.setManagerID((ID));
         m.setMesgStatus((status));
 
-        return m;
+        return turnToJson(m);
     }
 
-    public Message AuthenticateClient(String fname, String lname, String anum, String pass, int ID, int status)
+    public String AuthenticateClient(String fname, String lname, String anum, String pass, int ID, int status)
     {
         Message m = new Message();
         m.setMesgID((3));
@@ -49,30 +78,31 @@ public class Message_Encoder {
         m.setLANPass(pass);
         m.setClientID((ID));
         m.setMesgStatus((status));
-        return m;
+
+        return turnToJson(m);
     }
 
-    public Message RequestPriorityToken(int ID, int status)
+    public String RequestPriorityToken(int ID, int status)
     {
         Message m = new Message();
         m.setMesgID((4));
         m.setClientID((ID));
         m.setMesgStatus((status));
 
-        return m;
+        return turnToJson(m);
     }
 
-    public Message ReleasePriorityToken(int clientID, int status)
+    public String ReleasePriorityToken(int clientID, int status)
     {
         Message m = new Message();
         m.setMesgID((5));
         m.setClientID(clientID);
         m.setMesgStatus((status));
 
-        return m;
+        return turnToJson(m);
     }
 
-    public Message RequestAnalyticData(byte[] ID,  int numClients, String participation, int status)
+    public String RequestAnalyticData(int ID,  int numClients, String participation, int status)
     {
         Message m = new Message();
         m.setMesgID((6));
@@ -81,55 +111,56 @@ public class Message_Encoder {
         m.setMesgStatus(status);
         m.setParticipation(participation);
 
-        return m;
+        return turnToJson(m);
     }
 
-    public Message ClientDisconnect(int ID, int status)
+    public String ClientDisconnect(int ID, int status)
     {
         Message m = new Message();
         m.setMesgID((7));
         m.setClientID((ID));
         m.setMesgStatus((status));
 
-        return m;
+        return turnToJson(m);
     }
 
-    public Message MuteComm(byte[] ID, int status)
+    public String MuteComm(int ID, int status)
     {
         Message m = new Message();
         m.setMesgID((8));
         m.setManagerID((ID));
         m.setMesgStatus((status));
 
-        return m;
+        return turnToJson(m);
     }
 
-    public Message UnMuteComm(byte[] ID, int status)
+    public String UnMuteComm(int ID, int status)
     {
         Message m = new Message();
         m.setMesgID((9));
         m.setManagerID((ID));
         m.setMesgStatus((status));
 
-        return m;
+        return turnToJson(m);
     }
 
-    public Message GracefulShutdown(byte[] ID, int status)
+    public String GracefulShutdown(int ID, int status)
     {
         Message m = new Message();
         m.setMesgID((10));
         m.setManagerID((ID));
         m.setMesgStatus((status));
 
-        return m;
+        return turnToJson(m);
     }
 
     //the following is used only for testing purposes, not ever used in the program
-    public Message ClearTheLine()
+    public String ClearTheLine()
     {
         Message m = new Message();
         m.setMesgID(99);
         m.setMesgStatus(99);
-        return m;
+
+        return turnToJson(m);
     }
 }

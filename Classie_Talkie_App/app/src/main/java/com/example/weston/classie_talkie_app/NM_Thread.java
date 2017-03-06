@@ -1,31 +1,20 @@
 package com.example.weston.classie_talkie_app;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.IBinder;
 import android.os.StrictMode;
-import android.support.annotation.Nullable;
 
 import java.io.IOException;
-import java.util.Queue;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.LinkedList;
+import java.util.Queue;
 
 /**
- * Created by Weston on 2/7/2017.
+ * Created by Weston on 3/6/2017.
  */
 
-public class Client_Thread {
+public class NM_Thread {
     private static String TAG = "AudioClient";
-    //Todo
-    /*
-        Figure out how to update UI from here
-        figure out how to receive messages
-        figure out how to end 
-     */
 
     /* Send/Receive Queue */
     private Queue<String> sendQueue;
@@ -36,29 +25,15 @@ public class Client_Thread {
     private boolean _running = true;
     private InetAddress _inetAddr;
     private int _port;
-    private int clientID = -1;
+    private int managerID = -1;
     private boolean _priorityToken = false;
-    private Client_Convo client_convo;
+    private NM_Convo nm_convo;
 
     /*TCP Send/Receive Threads*/
     private TCP_Sender tcp_sender;
     private TCP_Receiver tcp_receiver;
 
-    /*Flags*/
-    private boolean isAuthenticated = false;
-
-    /*
-    procedure:
-    initialize variables
-    connect to the server
-    begin running until told to stop
-        check for incomming messages
-        decide what to do with any of the messages
-        send all outgoing message
-            --what to do if I receive a message, but I also want to send a message
-     */
-
-    public Client_Thread()
+    public NM_Thread()
     {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -85,7 +60,7 @@ public class Client_Thread {
 
                 while (_running)
                 {
-                    client_convo.check();
+                    //client_convo.check();
                 }
 
                 System.out.print("Server Connection has been lost");
@@ -101,9 +76,6 @@ public class Client_Thread {
         serverThread.start();
     }
 
-
-
-
     public int connectToServer(String ip, String port) {
         System.out.println("Trying to connect to server");
         //Set Params
@@ -116,25 +88,25 @@ public class Client_Thread {
             e.printStackTrace();
         }
 
-       try {
-           // TCP Socket
-           this._socket = new Socket();
-           System.out.println("Will it connect? to "+this._inetAddr+":"+ this._port);
-           this._socket.connect(new InetSocketAddress(this._inetAddr,  this._port), 1000); //this is where its breaking
-           System.out.println("connected ah yeah");
-           if (!this.get_socket().isConnected())
-           {
-               // if not connected, return -1 as an error
-               System.out.println("Not connected!!!!!!");
-               this.set_running(false);
-               return -1;
-           }
-       }catch(IOException e)
-       {
-           System.out.println("Catch block caught error");
-           e.printStackTrace();
-           return -1;
-       }
+        try {
+            // TCP Socket
+            this._socket = new Socket();
+            System.out.println("Connect to "+this._inetAddr+":"+ this._port);
+            this._socket.connect(new InetSocketAddress(this._inetAddr,  this._port), 1000);
+            System.out.println("connected ");
+            if (!this.get_socket().isConnected())
+            {
+                // if not connected, return -1 as an error
+                System.out.println("Not connected!!!!!!");
+                this.set_running(false);
+                return -1;
+            }
+        }catch(IOException e)
+        {
+            System.out.println("Catch block caught error");
+            e.printStackTrace();
+            return -1;
+        }
         System.out.println("Connected!!!!!!");
         startTcpComm();
         return 1;
@@ -146,9 +118,10 @@ public class Client_Thread {
         this.tcp_receiver = new TCP_Receiver(this.get_socket(), this.getReceiveQueue());
 
         //Initialize Client Conversation
-        this.client_convo = new Client_Convo(this.getSendQueue(), this.getReceiveQueue(), this);
+        //this.client_convo = new Client_Convo(this.getSendQueue(), this.getReceiveQueue(), this);
         this._waitingToConnect = false;
     }
+
 
 
     public Queue<String> getSendQueue() {
@@ -175,6 +148,14 @@ public class Client_Thread {
         this._socket = _socket;
     }
 
+    public boolean is_waitingToConnect() {
+        return _waitingToConnect;
+    }
+
+    public void set_waitingToConnect(boolean _waitingToConnect) {
+        this._waitingToConnect = _waitingToConnect;
+    }
+
     public boolean is_running() {
         return _running;
     }
@@ -199,12 +180,21 @@ public class Client_Thread {
         this._port = _port;
     }
 
-    public Client_Convo getClient_convo() {
-        return client_convo;
+
+    public boolean is_priorityToken() {
+        return _priorityToken;
     }
 
-    public void setClient_convo(Client_Convo client_convo) {
-        this.client_convo = client_convo;
+    public void set_priorityToken(boolean _priorityToken) {
+        this._priorityToken = _priorityToken;
+    }
+
+    public NM_Convo getNm_convo() {
+        return nm_convo;
+    }
+
+    public void setNm_convo(NM_Convo nm_convo) {
+        this.nm_convo = nm_convo;
     }
 
     public TCP_Sender getTcp_sender() {
@@ -215,35 +205,11 @@ public class Client_Thread {
         this.tcp_sender = tcp_sender;
     }
 
-    public TCP_Receiver getTcp_receiver() {
-        return tcp_receiver;
+    public int getManagerID() {
+        return managerID;
     }
 
-    public void setTcp_receiver(TCP_Receiver tcp_receiver) {
-        this.tcp_receiver = tcp_receiver;
-    }
-
-    public boolean isAuthenticated() {
-        return isAuthenticated;
-    }
-
-    public void setAuthenticated(boolean authenticated) {
-        isAuthenticated = authenticated;
-    }
-
-    public int getClientID() {
-        return clientID;
-    }
-
-    public void setClientID(int clientID) {
-        this.clientID = clientID;
-    }
-
-    public boolean is_priorityToken() {
-        return _priorityToken;
-    }
-
-    public void set_priorityToken(boolean _priorityToken) {
-        this._priorityToken = _priorityToken;
+    public void setManagerID(int managerID) {
+        this.managerID = managerID;
     }
 }

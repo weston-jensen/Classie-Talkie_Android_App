@@ -8,11 +8,11 @@ import java.util.Queue;
 
 public class Convo {
 
-    private Queue<Message> sendQueue;
+    private Queue<String> sendQueue;
     private Queue<Message> receiveQueue;
     private Message_Encoder encode;
 
-    public Convo(Queue<Message> sendQueue, Queue<Message> receiveQueue)
+    public Convo(Queue<String> sendQueue, Queue<Message> receiveQueue)
     {
         this.setSendQueue(sendQueue);
         this.setReceiveQueue(receiveQueue);
@@ -20,11 +20,11 @@ public class Convo {
     }
 
 
-    public Queue<Message> getSendQueue() {
+    public Queue<String> getSendQueue() {
         return sendQueue;
     }
 
-    public void setSendQueue(Queue<Message> sendQueue) {
+    public void setSendQueue(Queue<String> sendQueue) {
         this.sendQueue = sendQueue;
     }
 

@@ -7,19 +7,19 @@ import java.io.Serializable;
  */
 
 public class Message implements Serializable {
-        protected int mesgID;
-        protected int mesgStatus;
-        protected byte[] managerID;
-        protected int clientID;
-        protected byte[] serverPass;
-        protected int clientNUM;
-        protected String LANPass;
-        protected String aNum;
-        protected String fname;
-        protected String lname;
-        protected String participation;
-        protected String message;
-        protected String ErrorType;
+        protected int mesgID = -99;
+        protected int mesgStatus = -99;
+        protected int managerID = -99;
+        protected int clientID = -99;
+        protected String serverPass = " ";
+        protected int clientNUM = -99;
+        protected String LANPass = " ";
+        protected String aNum = " ";
+        protected String fname = " ";
+        protected String lname = " ";
+        protected String participation = " ";
+        protected String message = " ";
+        protected String ErrorType = " ";
 
         public Message()
         {
@@ -43,11 +43,11 @@ public class Message implements Serializable {
             this.mesgStatus = mesgStatus;
         }
 
-        public byte[] getManagerID() {
+        public int getManagerID() {
             return managerID;
         }
 
-        public void setManagerID(byte[] managerID) {
+        public void setManagerID(int managerID) {
             this.managerID = managerID;
         }
 
@@ -59,11 +59,11 @@ public class Message implements Serializable {
             this.clientID = clientID;
         }
 
-        public byte[] getServerPass() {
+        public String getServerPass() {
             return serverPass;
         }
 
-        public void setServerPass(byte[] serverPass) {
+        public void setServerPass(String serverPass) {
             this.serverPass = serverPass;
         }
 

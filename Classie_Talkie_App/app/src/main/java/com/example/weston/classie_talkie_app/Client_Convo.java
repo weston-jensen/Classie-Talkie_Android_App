@@ -1,5 +1,7 @@
 package com.example.weston.classie_talkie_app;
 
+import android.util.Log;
+
 import java.util.Queue;
 
 /**
@@ -7,12 +9,15 @@ import java.util.Queue;
  */
 
 public class Client_Convo extends Convo{
+    private static String TAG = "AudioClient";
     private int clientID = -1;
     private boolean _running = true;
+    private Client_Thread ct;
 
-    public Client_Convo(Queue<Message> sendQueue, Queue<Message> receiveQueue)
+    public Client_Convo(Queue<String> sendQueue, Queue<Message> receiveQueue, Client_Thread ct)
     {
         super(sendQueue, receiveQueue);
+        this.ct = ct;
 
     }
 
@@ -35,7 +40,9 @@ public class Client_Convo extends Convo{
         int status = -1;
         int ID = -1;
 
-        System.out.println("Message Received: "+m.getMesgID());
+        System.out.println("*************************************************************");
+        Log.i(TAG,"Message Receuved: "+m.getMesgID());
+
 
         switch((m.getMesgID()))
         {
@@ -44,20 +51,19 @@ public class Client_Convo extends Convo{
                 /*Getting kicked off the LAN*/
                 if((m.getMesgStatus())<0)//Received -1 Command that LAN is destroyed
                 {
-                    //set our client ID
-                    //this.ct.setClient_ID(-1);//reset clientID
+                    this.ct.setClientID(-1);//reset clientID
                     this.clientID = -1;
-                    //this.ct.getCG().setStatus("Reconnect to LAN");
                     //this.ct.getCG().changeFrameTo_UserInfo();//change to start GUI
                     status = 1;
-
+                    Log.i(TAG,"Getting Kicked off the LAN");
                 }
                 else //There was an error
                 {
                     //Set Error Message in GUI window
                     status = -1;
+                    Log.i(TAG,"There was an error get kicked off LAN ");
                 }
-                this.getSendQueue().add(this.getEncode().EndLAN(null,status));
+                this.getSendQueue().add(this.getEncode().EndLAN(-99,status));
                 break;
             case 3:
                 /*AuthenticateClient reply from server*/
@@ -67,70 +73,54 @@ public class Client_Convo extends Convo{
                     {
                         //set our client ID
                         this.clientID = (m.getClientID());
-                        //this.ct.setClient_ID((m.getClientID()));
-                       // this.ct.getCG().changeFrameTo_PTT();
-
+                        this.ct.setClientID((m.getClientID()));
+                        this.ct.setAuthenticated(true);
+                        Log.i(TAG,"AuthenticateClient Reply From Server, clientID = "+this.clientID);
                     }
                 }
                 else //There was an error
                 {
                     //Set Error Message in GUI window
                    // this.ct.getCG().setStatus(m.getMessage());
-
+                    Log.i(TAG,"Error getting our clientID");
                 }
                 break;
             case 4:
                 //Received Priority Token Request Response
                 if((m.getMesgStatus())>0)//if we have received the token
                 {
-                    //this.ct.setPriorityToken(true);//set flag to true
-
-                    //this.ct.getCG().setPttState("Push To Finish");
-                    //this.ct.getCG().setPttToggle(0);
-                    //this.ct.getCG().setPptMessage("Transmitting is Online.");//update GUI message
-                    //this.ct.getCG().changeFrameTo_PTT();//update GUI
-
-                    //Set Up UDP Socket
-                    //connectToUDP();
+                    this.ct.set_priorityToken(true);
+                    Log.i(TAG,"We Received Priority Token");
                 }
                 else//We did not receive priority token
                 {
-                    //this.ct.setPriorityToken(false);//set flag to false
-                    //this.ct.getCG().setPptMessage(m.getMessage());//update GUI message
+                    this.ct.set_priorityToken(false);//set flag to false
+                    Log.i(TAG,"We Did Not Receive Priority Token");
                 }
                 break;
             case 5:
                 /*Release Priority Token Response*/
                 //-1 command, 1 ack
-
-                //this.ct.setPriorityToken(false);//set flag to false
-                //this.ct.getCG().setPttState("Push To Talk");
-                //this.ct.getCG().setPttToggle(1);
-                //this.ct.getCG().setPptMessage("Transmitting is Offline.");//Change GUI message
-                //this.ct.getCG().changeFrameTo_PTT();//update GUI
+                this.ct.set_priorityToken(false);
 
                 //Server is commanding us to release token (-1)
                 if((m.getMesgStatus())==-1)
                 {
                     //Acknowledge that we have the released the token
-                    //disconnectFromUDP();//Close UDP Socket
-                    //LOG.info("->NM kicked us off audio transmit!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                    //reply with ack
-                    //this.getSendQueue().add(this.getEncode().ReleasePriorityToken(this.ct.getClient_ID(),2));
+                    this.getSendQueue().add(this.getEncode().ReleasePriorityToken(this.ct.getClientID(),2));
+                    Log.i(TAG,"Server is Making us Release the Priority Token");
                 }
                 break;
             case 7:
                 /*Client Disconnect Reply Received*/
-                //this.ct.setClient_ID(-1);
-                //disconnectFromUDP();//Close UDP Socket if it was open
-                //this.ct.killThreads();
+                android.os.Process.killProcess(android.os.Process.myPid());
+                Log.i(TAG,"ClientDisconnect Reply Received");
                 break;
             case 10:
                 /*GracefulShutdown Request Received*/
-                this.getSendQueue().add(this.getEncode().GracefulShutdown(null, 1));//Tell server we are shutting down
-                //disconnectFromUDP();//Close UDP Socket if it was open
-                //this.ct.killThreads();
-                //this._running = false;
+                this.getSendQueue().add(this.getEncode().GracefulShutdown(-99, 1));//Tell server we are shutting down
+                android.os.Process.killProcess(android.os.Process.myPid());
+                Log.i(TAG,"GracefulShutdown Request Received");
                 break;
         }
     }

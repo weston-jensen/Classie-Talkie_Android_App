@@ -127,5 +127,16 @@
             android:layout_toRightOf="@+id/password_lbl"
             android:layout_toEndOf="@+id/password_lbl" />
 
+        <TextView
+            android:text="..."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/password_lbl"
+            android:layout_marginTop="38dp"
+            android:id="@+id/ciErrorMsg"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            tools:width="300dp"
+            android:textSize="18sp" />
+
     </RelativeLayout>
 </LinearLayout>

@@ -19,7 +19,9 @@
     <EditText
         p1:layout_width="match_parent"
         p1:layout_height="wrap_content"
-        p1:id="@+id/serverIP_tf" />
+        p1:id="@+id/serverIP_tf"
+        p1:inputType="text"
+        p1:text="192.168.0.33" />
     <TextView
         p1:text="Server Port:"
         p1:textAppearance="?android:attr/textAppearanceMedium"
