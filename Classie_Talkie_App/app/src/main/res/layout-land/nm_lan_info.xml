@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:orientation="vertical"
         android:minWidth="25px"
@@ -10,26 +13,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout1" />
+
     <TextView
         android:text="Start LAN"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_width="99.5dp"
+        android:layout_width="224dp"
         android:layout_height="wrap_content"
         android:id="@+id/textView1"
-        android:layout_marginLeft="140.0dp"
+        android:layout_marginLeft="220.0dp"
         android:layout_marginRight="0.0dp" />
+
     <TextView
         android:text="LAN Password:"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textView2"
-        android:layout_marginTop="80.0dp" />
+        android:layout_marginTop="80.0dp"
+        android:textSize="24sp" />
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/lanPswd_tf"
-        android:text="password" />
+        android:text="password"
+        android:fadingEdge="horizontal|vertical" />
+
     <Button
         android:text="Enter"
         android:layout_width="180.5dp"

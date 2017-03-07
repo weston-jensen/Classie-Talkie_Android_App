@@ -76,7 +76,7 @@ public class Send_UDP {
                     /*recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
                             RECORDING_RATE, CHANNEL, FORMAT, BUFFER_SIZE * 10);*/
 
-                    recorder = new AudioRecord(MediaRecorder.AudioSource.DEFAULT,
+                    recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
                             RECORDING_RATE,
                             AudioFormat.CHANNEL_IN_MONO,
                             AudioFormat.ENCODING_PCM_16BIT,
@@ -84,7 +84,7 @@ public class Send_UDP {
 
                    // short[] buffer = new short[bufferSize / 2];
 
-                   byte[] buffer = new byte[bufferSize/2];
+                   byte[] buffer = new byte[bufferSize/5];
 
                     Log.i(TAG,"BufferSize = "+bufferSize);
 
@@ -99,7 +99,7 @@ public class Send_UDP {
                     {
                         int read = recorder.read(buffer,0,buffer.length);
 
-
+/*
                         Filter filter2 = new Filter(85,44100, Filter.PassType.Highpass,1);
                         for (int i = 0; i < buffer.length; i++)
                         {
@@ -114,10 +114,8 @@ public class Send_UDP {
                             filter.Update(buffer[i]);
                             buffer[i] = (byte) filter.getValue();
                         }
-
-                        packet = new DatagramPacket(buffer, read,
-                                serverAddress,PORT);
-
+*/
+                        packet = new DatagramPacket(buffer, read, serverAddress,PORT);
                         socket.send(packet);
                     }
                     Log.d(TAG, "AudioRecord finished recording");

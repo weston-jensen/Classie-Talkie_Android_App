@@ -14,24 +14,24 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="132dp"
-            android:id="@+id/unmute_btn" />
+            android:id="@+id/mute_btn" />
 
         <Button
             android:text="Restart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_toStartOf="@+id/unmute_btn"
+            android:layout_toStartOf="@+id/mute_btn"
             android:layout_marginEnd="18dp"
             android:layout_marginBottom="117dp"
-            android:id="@+id/end_lan_btn2" />
+            android:id="@+id/end_lan_btn1" />
 
         <Button
             android:text="Shutdown"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/end_lan_btn2"
-            android:layout_toEndOf="@+id/unmute_btn"
+            android:layout_alignTop="@+id/end_lan_btn1"
+            android:layout_toEndOf="@+id/mute_btn"
             android:id="@+id/shutdown_btn_1" />
 
         <TextView

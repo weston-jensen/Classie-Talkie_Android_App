@@ -44,7 +44,7 @@ public class TCP_Receiver {
                         {
                             Message m = null;
                             if (_inFromServer != null) {
-                                Log.i(TAG, "Checkinging for messages received");
+                                Log.i(TAG, "Checking for messages received");
                                 String mesg = (String)_inFromServer.readObject();
                                 m = decode.decodeMessage(mesg);
 

@@ -23,9 +23,12 @@ public class NM_Thread {
     private Socket _socket;
     private boolean _waitingToConnect = true;
     private boolean _running = true;
+    private boolean _authServerPw = false;
+    private boolean _setLanPw = false;
+    private boolean _muteConvo = false;
     private InetAddress _inetAddr;
     private int _port;
-    private int managerID = -1;
+    private int managerID = -1;//need to fix this
     private boolean _priorityToken = false;
     private NM_Convo nm_convo;
 
@@ -37,6 +40,7 @@ public class NM_Thread {
     {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
         //Initialize Message Queues
         this.setSendQueue(new LinkedList<String>());
         this.setReceiveQueue(new LinkedList<Message>());
@@ -60,7 +64,7 @@ public class NM_Thread {
 
                 while (_running)
                 {
-                    //client_convo.check();
+                    nm_convo.check();
                 }
 
                 System.out.print("Server Connection has been lost");
@@ -117,8 +121,8 @@ public class NM_Thread {
         this.tcp_sender = new TCP_Sender(this.get_socket(), this.getSendQueue());
         this.tcp_receiver = new TCP_Receiver(this.get_socket(), this.getReceiveQueue());
 
-        //Initialize Client Conversation
-        //this.client_convo = new Client_Convo(this.getSendQueue(), this.getReceiveQueue(), this);
+        //Initialize NM Conversation
+        this.nm_convo = new NM_Convo(this.getSendQueue(),this.getReceiveQueue(),this);
         this._waitingToConnect = false;
     }
 
@@ -211,5 +215,29 @@ public class NM_Thread {
 
     public void setManagerID(int managerID) {
         this.managerID = managerID;
+    }
+
+    public boolean is_authServerPw() {
+        return _authServerPw;
+    }
+
+    public void set_authServerPw(boolean _authServerPw) {
+        this._authServerPw = _authServerPw;
+    }
+
+    public boolean is_setLanPw() {
+        return _setLanPw;
+    }
+
+    public void set_setLanPw(boolean _setLanPw) {
+        this._setLanPw = _setLanPw;
+    }
+
+    public boolean is_muteConvo() {
+        return _muteConvo;
+    }
+
+    public void set_muteConvo(boolean _muteConvo) {
+        this._muteConvo = _muteConvo;
     }
 }

@@ -2,6 +2,7 @@ package com.example.weston.classie_talkie_app;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +15,8 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import java.util.concurrent.Delayed;
 
 import static android.R.attr.start;
 
@@ -68,13 +71,21 @@ public class MainActivity extends AppCompatActivity {
                 serverPort = edit_sp.getText().toString();
 
                 System.out.println("just before trying to connect");
-
                 if(nm_thread.connectToServer(serverAddr, serverPort)>0)//connect to the server
                 {
                     nm_thread.beginThreads();
-                    clientInfo_UI();//Change Frame
+                    nm_info_UI();//Change Frame
                 }
+/*
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
 
+                    }
+                }, 5000);
+*/
             }
         });
     }
@@ -90,42 +101,129 @@ public class MainActivity extends AppCompatActivity {
                 final EditText serverpw = (EditText) findViewById(R.id.serverPswd_tf);
                 serverPasswd = serverpw.getText().toString();
 
-                nm_thread.getSendQueue().add(mesgEncoder.AuthenticateManager(serverPasswd,"Authenticating",-1,-1));
+                nm_thread.getSendQueue().add(mesgEncoder.AuthenticateManager("CS-5200","Authenticating",-1,-1));
+                if((nm_thread.is_waitingToConnect()==false)&&(nm_thread.is_authServerPw()))
+                {
+                    nm_lan_info_UI();//go to nm info UI
+                }
 
-                //TODO
-                //dont change UI until we are authenticated
-                nm_lan_info_UI();
-
+/*
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable()
+                {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        if(nm_thread.is_waitingToConnect()==false)
+                        {
+                            nm_lan_info_UI();//go to nm info UI
+                        }
+                    }
+                }, 3000);
+*/
             }
         });
     }
 
-    private void nm_lan_info_UI() {
-        setContentView(R.layout.nm_info);
+    private void nm_lan_info_UI()
+    {
+        setContentView(R.layout.nm_lan_info);
 
-        final Button button = (Button) findViewById(R.id.lanEnter_btn);
-        button.setOnClickListener(new View.OnClickListener()
+        final Button LanEnter = (Button) findViewById(R.id.lanEnter_btn);
+        LanEnter.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v) {
                 String lanPasswd;
-                final EditText serverpw = (EditText) findViewById(R.id.lanPswd_tf);
-                lanPasswd = serverpw.getText().toString();
+                final EditText lanpw = (EditText) findViewById(R.id.lanPswd_tf);
+                lanPasswd = lanpw.getText().toString();
 
                 nm_thread.getSendQueue().add(mesgEncoder.CreateLAN(nm_thread.getManagerID(),lanPasswd,-1));
 
-                //TODO
-                //dont change UI until we receive ACK
+                if(nm_thread.is_setLanPw())
+                {
+                    nm_control1_UI();//go to NM Control UI
+                }
 
+/*
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                         if(nm_thread.is_authServerPw())
+                        {
+                            nm_control1_UI();//go to NM Control UI
+                        }
+                    }
+                }, 3000);
+*/
+
+
+            }
+        });
+    }
+
+    private void nm_control1_UI() {
+        setContentView(R.layout.nm_control_1);
+
+        final Button mute = (Button) findViewById(R.id.mute_btn);
+        mute.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v) {
+                nm_thread.getSendQueue().add(mesgEncoder.MuteComm(nm_thread.getManagerID(),-1));
+                nm_control2_UI();
+            }
+        });
+
+        final Button restart = (Button) findViewById(R.id.end_lan_btn1);
+        restart.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v) {
+                nm_thread.getSendQueue().add(mesgEncoder.EndLAN(nm_thread.getManagerID(),-1));
+            }
+        });
+
+        final Button shutdown = (Button) findViewById(R.id.shutdown_btn_1);
+        shutdown.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v) {
+                nm_thread.getSendQueue().add(mesgEncoder.GracefulShutdown(nm_thread.getManagerID(),-1));
+            }
+        });
+    }
+
+    private void nm_control2_UI() {
+        setContentView(R.layout.nm_control_2);
+
+        final Button mute = (Button) findViewById(R.id.unmute_btn);
+        mute.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v) {
+                nm_thread.getSendQueue().add(mesgEncoder.UnMuteComm(nm_thread.getManagerID(),-1));
+                nm_control1_UI();
+            }
+        });
+
+        final Button restart = (Button) findViewById(R.id.end_lan_btn2);
+        restart.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v) {
+                nm_thread.getSendQueue().add(mesgEncoder.EndLAN(nm_thread.getManagerID(),-1));
+            }
+        });
+
+        final Button shutdown = (Button) findViewById(R.id.shutdown_btn_2);
+        shutdown.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v) {
+                nm_thread.getSendQueue().add(mesgEncoder.GracefulShutdown(nm_thread.getManagerID(),-1));
             }
         });
     }
 
 
 
-
-
-
-
+    /*********************Client Interface Functions********************************/
     private void ipAndPort_UI() {
         setContentView(R.layout.ip_port);
 
@@ -207,11 +305,15 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("PTT CLICK");
                 client_thread.getSendQueue().add(mesgEncoder.RequestPriorityToken(0,-1));
 
-                if(client_thread.is_priorityToken())
+                send_Udp.startStreamingAudio();
+                Transmit_UI();
+
+               /* if(client_thread.is_priorityToken())
                 {
                     send_Udp.startStreamingAudio();
                     Transmit_UI();
                 }
+                */
             }
         });
 
@@ -230,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
         final Button Stopbutton = (Button) findViewById(R.id.pushToStop);
         Stopbutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                System.out.println("Stoped Transmitting");
+                System.out.println("Stopped Transmitting");
                 send_Udp.stopStreamingAudio();
                 client_thread.set_priorityToken(false);//release priority token
                 client_thread.getSendQueue().add(mesgEncoder.ReleasePriorityToken(client_thread.getClientID(),1));//Tell Server we no longer need token
