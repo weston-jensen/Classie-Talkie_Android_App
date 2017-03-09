@@ -3,7 +3,9 @@ package com.example.weston.classie_talkie_app;
 import android.app.Activity;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
+import android.media.MediaActionSound;
 import android.media.MediaRecorder;
+import android.net.rtp.AudioStream;
 import android.util.Log;
 
 import java.net.DatagramPacket;
@@ -20,11 +22,10 @@ import static android.media.AudioRecord.getMinBufferSize;
 public class Send_UDP {
     private static String TAG = "AudioClient";
     // the audio recording options
-    private static final int RECORDING_RATE = 44100;
+    private static final int RECORDING_RATE = 44100; //44100
     private static final int CHANNEL = AudioFormat.CHANNEL_IN_MONO;
     private static final int FORMAT = AudioFormat.ENCODING_PCM_16BIT;
-    private static int BUFFER_SIZE = getMinBufferSize(
-    RECORDING_RATE, CHANNEL, FORMAT);
+    private static int BUFFER_SIZE =  44100;//getMinBufferSize( RECORDING_RATE, CHANNEL, FORMAT);
     private AudioRecord recorder;
     private boolean currentlySendingAudio = false;
     private static String SERVER;
@@ -41,6 +42,7 @@ public class Send_UDP {
         Log.i(TAG,"Start streaming audio");
         currentlySendingAudio = true;
         startStreaming();
+
     }
 
     public void stopStreamingAudio()
@@ -69,6 +71,8 @@ public class Send_UDP {
                     final InetAddress serverAddress = InetAddress.getByName(SERVER);
                     DatagramPacket packet;
 
+
+
                     int bufferSize = AudioRecord.getMinBufferSize(RECORDING_RATE,
                             AudioFormat.CHANNEL_IN_MONO,
                             AudioFormat.ENCODING_PCM_16BIT);
@@ -80,11 +84,16 @@ public class Send_UDP {
                             RECORDING_RATE,
                             AudioFormat.CHANNEL_IN_MONO,
                             AudioFormat.ENCODING_PCM_16BIT,
-                            bufferSize);
+                            BUFFER_SIZE);
+
+
+
+                    //https://www.sinch.com/tutorials/android-app-to-app-voip-tutorial/
+
 
                    // short[] buffer = new short[bufferSize / 2];
 
-                   byte[] buffer = new byte[bufferSize/5];
+                   byte[] buffer = new byte[BUFFER_SIZE];
 
                     Log.i(TAG,"BufferSize = "+bufferSize);
 
@@ -92,30 +101,20 @@ public class Send_UDP {
                         Log.i(TAG,"Could not initialize Recorder");
                     }
 
-                    recorder.startRecording();
-
+                    try {
+                        recorder.startRecording();
+                    }catch(Exception e)
+                    {
+                        Log.e(TAG,"Could not start recording");
+                        e.printStackTrace();
+                    }
 
                     while(currentlySendingAudio)
                     {
                         int read = recorder.read(buffer,0,buffer.length);
+                        System.out.println(read);
 
-/*
-                        Filter filter2 = new Filter(85,44100, Filter.PassType.Highpass,1);
-                        for (int i = 0; i < buffer.length; i++)
-                        {
-                            filter2.Update(buffer[i]);
-                            buffer[i] = (byte) filter2.getValue();
-                        }
-
-
-                        Filter filter = new Filter(4500,44100, Filter.PassType.Lowpass,1);
-                        for (int i = 0; i < buffer.length; i++)
-                        {
-                            filter.Update(buffer[i]);
-                            buffer[i] = (byte) filter.getValue();
-                        }
-*/
-                        packet = new DatagramPacket(buffer, read, serverAddress,PORT);
+                        packet = new DatagramPacket(buffer, buffer.length, serverAddress,PORT);
                         socket.send(packet);
                     }
                     Log.d(TAG, "AudioRecord finished recording");
