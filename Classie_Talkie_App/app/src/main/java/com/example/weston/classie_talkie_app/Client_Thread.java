@@ -18,7 +18,7 @@ import java.util.LinkedList;
  * Created by Weston on 2/7/2017.
  */
 
-public class Client_Thread {
+public class Client_Thread extends MainActivity{
     private static String TAG = "AudioClient";
     //Todo
     /*
@@ -47,16 +47,6 @@ public class Client_Thread {
     /*Flags*/
     private boolean isAuthenticated = false;
 
-    /*
-    procedure:
-    initialize variables
-    connect to the server
-    begin running until told to stop
-        check for incomming messages
-        decide what to do with any of the messages
-        send all outgoing message
-            --what to do if I receive a message, but I also want to send a message
-     */
 
     public Client_Thread()
     {

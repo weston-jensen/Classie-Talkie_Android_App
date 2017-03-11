@@ -1,12 +1,14 @@
 package com.example.weston.classie_talkie_app;
 
+import android.app.Activity;
+
 import java.util.Queue;
 
 /**
  * Created by Weston on 2/7/2017.
  */
 
-public class Convo {
+public class Convo extends Activity{
 
     private Queue<String> sendQueue;
     private Queue<Message> receiveQueue;

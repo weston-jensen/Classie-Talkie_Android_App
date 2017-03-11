@@ -3,6 +3,7 @@ package com.example.weston.classie_talkie_app;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -20,7 +21,7 @@ import java.util.concurrent.Delayed;
 
 import static android.R.attr.start;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     private String serverAddr;
     private String serverPort;
     private String firstName;
@@ -252,8 +253,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+
     private void clientInfo_UI() {
         setContentView(R.layout.client_info);
+
+        if(client_thread.isAuthenticated())
+        {
+            send_Udp = new Send_UDP(serverAddr);
+            PTT_UI();
+        }
 
         final Button button = (Button) findViewById(R.id.client_info_btn);
         button.setOnClickListener(new View.OnClickListener() {
@@ -270,15 +279,21 @@ public class MainActivity extends AppCompatActivity {
                 final EditText edit_passwd =  (EditText) findViewById( R.id.password_tf);
                 password = edit_passwd.getText().toString();
 
-                //could do a quick process right here...
+                //Send Message to Server
+                client_thread.getSendQueue().add(mesgEncoder.AuthenticateClient(firstName,lastName,anum,password,client_thread.getClientID(),-1));
 
-                //client_thread.getSendQueue().add(mesgEncoder.AuthenticateClient(firstName,lastName,anum,password,-1,-1));
-                client_thread.getSendQueue().add(mesgEncoder.AuthenticateClient("Weston", "Jensen", "A01211187", "password",-1,-1));
+                /*final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        client_thread.getSendQueue().add(mesgEncoder.AuthenticateClient(firstName,lastName,anum,password,-1,-1));
+                    }
+                }, 4000);
+                */
 
 
 
-                if(client_thread.isAuthenticated())
-                {
+                if(client_thread.isAuthenticated()) {
                     send_Udp = new Send_UDP(serverAddr);
                     PTT_UI();
                 }
@@ -286,15 +301,14 @@ public class MainActivity extends AppCompatActivity {
                 {
                     //display error message
                     final TextView edit_error = (TextView) findViewById(R.id.ciErrorMsg);
-                    edit_error.setText("Error Authenticating to server");
+                    edit_error.setText("Try Again");
                 }
-
             }
         });
 
     }
 
-    private void PTT_UI() {
+    public void PTT_UI() {
         setContentView(R.layout.push_to_talk);
 
         System.out.println("IN PTT");
@@ -303,17 +317,17 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 System.out.println("PTT CLICK");
-                client_thread.getSendQueue().add(mesgEncoder.RequestPriorityToken(0,-1));
+                client_thread.getSendQueue().add(mesgEncoder.RequestPriorityToken(client_thread.getClientID(),-1));
 
-                send_Udp.startStreamingAudio();
-                Transmit_UI();
+               // send_Udp.startStreamingAudio();
+               // Transmit_UI();
 
-               /* if(client_thread.is_priorityToken())
+               if(client_thread.is_priorityToken())
                 {
                     send_Udp.startStreamingAudio();
                     Transmit_UI();
                 }
-                */
+
             }
         });
 
@@ -325,6 +339,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
     private void Transmit_UI()
     {
         setContentView(R.layout.transmit_audio);
@@ -335,11 +350,33 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("Stopped Transmitting");
                 send_Udp.stopStreamingAudio();
                 client_thread.set_priorityToken(false);//release priority token
-                client_thread.getSendQueue().add(mesgEncoder.ReleasePriorityToken(client_thread.getClientID(),1));//Tell Server we no longer need token
+                client_thread.getSendQueue().add(mesgEncoder.ReleasePriorityToken(client_thread.getClientID(),-1));//Tell Server we no longer need token
+                //client_thread.getSendQueue().add(mesgEncoder.ReleasePriorityToken(client_thread.getClientID(),1));//Tell Server we no longer need token
+
                 PTT_UI();//go back to PTT
             }
         });
     }
+
+
+
+    public void updateText(final String command) {
+        this.runOnUiThread(new Runnable() {
+            public void run() {
+                switch(command)
+                {
+                    case "GOTO_PTT" :
+                        PTT_UI();
+                        break;
+
+                }
+            }
+        });
+    }
+
+
+
+
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.

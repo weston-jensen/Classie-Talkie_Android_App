@@ -1,6 +1,10 @@
 package com.example.weston.classie_talkie_app;
 
+import android.app.Activity;
+import android.content.Context;
+import android.support.annotation.MainThread;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.Queue;
 
@@ -76,6 +80,11 @@ public class Client_Convo extends Convo{
                         this.ct.setClientID((m.getClientID()));
                         this.ct.setAuthenticated(true);
                         Log.i(TAG,"AuthenticateClient Reply From Server, clientID = "+this.clientID);
+                        //i wish I could change the screen here easily
+
+
+
+
                     }
                 }
                 else //There was an error

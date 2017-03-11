@@ -19,7 +19,7 @@ import static android.media.AudioRecord.getMinBufferSize;
  * Created by Weston on 3/4/2017.
  */
 
-public class Send_UDP {
+public class Send_UDP{
     private static String TAG = "AudioClient";
     // the audio recording options
     private static final int RECORDING_RATE = 44100; //44100
@@ -30,6 +30,8 @@ public class Send_UDP {
     private boolean currentlySendingAudio = false;
     private static String SERVER;
     private static int PORT = 13002;
+
+
 
 
     public Send_UDP(String serverIP)
