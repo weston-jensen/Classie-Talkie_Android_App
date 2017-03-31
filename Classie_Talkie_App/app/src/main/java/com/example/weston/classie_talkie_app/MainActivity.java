@@ -2,28 +2,16 @@ package com.example.weston.classie_talkie_app;
 
 import android.app.Activity;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.*;
 
 import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import java.util.concurrent.Delayed;
-
-import static android.R.attr.start;
 
 public class MainActivity extends Activity {
-    private String serverAddr;
-    private String serverPort;
+    public String serverAddr;
+    public String serverPort;
     private String firstName;
     private String lastName;
     private String anum;
@@ -34,17 +22,20 @@ public class MainActivity extends Activity {
     private Client_Thread client_thread;
     private Message_Encoder mesgEncoder;
     private Send_UDP send_Udp;
+    private MainActivity ma;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start);
 
+        ma = this;
+
         final Button button1 = (Button) findViewById(R.id.studentOption);
         button1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mesgEncoder = new Message_Encoder();
-                client_thread = new Client_Thread();//initialize
+                client_thread = new Client_Thread(ma);//initialize
                 ipAndPort_UI();//change to get Ip and Port UI
             }
         });
@@ -53,7 +44,7 @@ public class MainActivity extends Activity {
         button2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mesgEncoder = new Message_Encoder();
-                nm_thread = new NM_Thread();
+                nm_thread = new NM_Thread(ma);
                 ipAndPort_NM_UI();
             }
         });
@@ -77,16 +68,6 @@ public class MainActivity extends Activity {
                     nm_thread.beginThreads();
                     nm_info_UI();//Change Frame
                 }
-/*
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Do something after 5s = 5000ms
-
-                    }
-                }, 5000);
-*/
             }
         });
     }
@@ -103,30 +84,11 @@ public class MainActivity extends Activity {
                 serverPasswd = serverpw.getText().toString();
 
                 nm_thread.getSendQueue().add(mesgEncoder.AuthenticateManager("CS-5200","Authenticating",-1,-1));
-                if((nm_thread.is_waitingToConnect()==false)&&(nm_thread.is_authServerPw()))
-                {
-                    nm_lan_info_UI();//go to nm info UI
-                }
-
-/*
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable()
-                {
-                    @Override
-                    public void run() {
-                        // Do something after 5s = 5000ms
-                        if(nm_thread.is_waitingToConnect()==false)
-                        {
-                            nm_lan_info_UI();//go to nm info UI
-                        }
-                    }
-                }, 3000);
-*/
             }
         });
     }
 
-    private void nm_lan_info_UI()
+    public void nm_lan_info_UI()
     {
         setContentView(R.layout.nm_lan_info);
 
@@ -139,32 +101,11 @@ public class MainActivity extends Activity {
                 lanPasswd = lanpw.getText().toString();
 
                 nm_thread.getSendQueue().add(mesgEncoder.CreateLAN(nm_thread.getManagerID(),lanPasswd,-1));
-
-                if(nm_thread.is_setLanPw())
-                {
-                    nm_control1_UI();//go to NM Control UI
-                }
-
-/*
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Do something after 5s = 5000ms
-                         if(nm_thread.is_authServerPw())
-                        {
-                            nm_control1_UI();//go to NM Control UI
-                        }
-                    }
-                }, 3000);
-*/
-
-
             }
         });
     }
 
-    private void nm_control1_UI() {
+    public void nm_control1_UI() {
         setContentView(R.layout.nm_control_1);
 
         final Button mute = (Button) findViewById(R.id.mute_btn);
@@ -189,6 +130,7 @@ public class MainActivity extends Activity {
         {
             public void onClick(View v) {
                 nm_thread.getSendQueue().add(mesgEncoder.GracefulShutdown(nm_thread.getManagerID(),-1));
+                ma.finish();
             }
         });
     }
@@ -218,6 +160,7 @@ public class MainActivity extends Activity {
         {
             public void onClick(View v) {
                 nm_thread.getSendQueue().add(mesgEncoder.GracefulShutdown(nm_thread.getManagerID(),-1));
+                ma.finish();
             }
         });
     }
@@ -237,12 +180,6 @@ public class MainActivity extends Activity {
                 final EditText edit_sp =  (EditText) findViewById( R.id.serverPort_tf);
                 serverPort = edit_sp.getText().toString();
 
-                System.out.println("just before trying to connect");
-
-                //send_Udp = new Send_UDP(serverAddr);
-                //PTT_UI();
-
-
                 if(client_thread.connectToServer(serverAddr, serverPort)>0)//connect to the server
                 {
                     client_thread.beginThreads();
@@ -257,12 +194,6 @@ public class MainActivity extends Activity {
 
     private void clientInfo_UI() {
         setContentView(R.layout.client_info);
-
-        if(client_thread.isAuthenticated())
-        {
-            send_Udp = new Send_UDP(serverAddr);
-            PTT_UI();
-        }
 
         final Button button = (Button) findViewById(R.id.client_info_btn);
         button.setOnClickListener(new View.OnClickListener() {
@@ -281,28 +212,6 @@ public class MainActivity extends Activity {
 
                 //Send Message to Server
                 client_thread.getSendQueue().add(mesgEncoder.AuthenticateClient(firstName,lastName,anum,password,client_thread.getClientID(),-1));
-
-                /*final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        client_thread.getSendQueue().add(mesgEncoder.AuthenticateClient(firstName,lastName,anum,password,-1,-1));
-                    }
-                }, 4000);
-                */
-
-
-
-                if(client_thread.isAuthenticated()) {
-                    send_Udp = new Send_UDP(serverAddr);
-                    PTT_UI();
-                }
-                else
-                {
-                    //display error message
-                    final TextView edit_error = (TextView) findViewById(R.id.ciErrorMsg);
-                    edit_error.setText("Try Again");
-                }
             }
         });
 
@@ -318,16 +227,13 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 System.out.println("PTT CLICK");
                 client_thread.getSendQueue().add(mesgEncoder.RequestPriorityToken(client_thread.getClientID(),-1));
+            }
+        });
 
-               // send_Udp.startStreamingAudio();
-               // Transmit_UI();
-
-               if(client_thread.is_priorityToken())
-                {
-                    send_Udp.startStreamingAudio();
-                    Transmit_UI();
-                }
-
+        final Button closeButton = (Button) findViewById(R.id.closeClient_btn);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ma.finish();
             }
         });
 
@@ -340,7 +246,7 @@ public class MainActivity extends Activity {
     }
 
 
-    private void Transmit_UI()
+    public void Transmit_UI()
     {
         setContentView(R.layout.transmit_audio);
 
@@ -348,35 +254,38 @@ public class MainActivity extends Activity {
         Stopbutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 System.out.println("Stopped Transmitting");
-                send_Udp.stopStreamingAudio();
+                getSend_Udp().stopStreamingAudio();
                 client_thread.set_priorityToken(false);//release priority token
                 client_thread.getSendQueue().add(mesgEncoder.ReleasePriorityToken(client_thread.getClientID(),-1));//Tell Server we no longer need token
-                //client_thread.getSendQueue().add(mesgEncoder.ReleasePriorityToken(client_thread.getClientID(),1));//Tell Server we no longer need token
 
                 PTT_UI();//go back to PTT
             }
         });
     }
 
+    public void setText(int type, String text)
+    {
+        switch(type)
+        {
+            case 0:
+                final TextView edit_error = (TextView) findViewById(R.id.ciErrorMsg);
+                edit_error.setText(text);
+                break;
+            case 1:
+                TextView mesg = (TextView) findViewById(R.id.msgFeedback_lbl);
+                mesg.setText(text);
+                break;
+            case 2:
+                TextView nmMesg = (TextView) findViewById(R.id.nm_mesgStatus);
+                nmMesg.setText(text);
+                break;
+            case 3:
+                TextView nm_infoMesg = (TextView) findViewById(R.id.nm_infoMesg);
+                nm_infoMesg.setText(text);
+                break;
 
-
-    public void updateText(final String command) {
-        this.runOnUiThread(new Runnable() {
-            public void run() {
-                switch(command)
-                {
-                    case "GOTO_PTT" :
-                        PTT_UI();
-                        break;
-
-                }
-            }
-        });
+        }
     }
-
-
-
-
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -395,6 +304,12 @@ public class MainActivity extends Activity {
     }
 
 
+    public Send_UDP getSend_Udp() {
+        return send_Udp;
+    }
 
+    public void setSend_Udp(Send_UDP send_Udp) {
+        this.send_Udp = send_Udp;
+    }
 }
 

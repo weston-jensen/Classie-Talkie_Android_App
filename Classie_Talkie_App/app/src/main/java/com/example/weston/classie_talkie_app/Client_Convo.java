@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.MainThread;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Queue;
@@ -80,18 +82,27 @@ public class Client_Convo extends Convo{
                         this.ct.setClientID((m.getClientID()));
                         this.ct.setAuthenticated(true);
                         Log.i(TAG,"AuthenticateClient Reply From Server, clientID = "+this.clientID);
-                        //i wish I could change the screen here easily
 
-
-
-
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ct.getMainActivity().setSend_Udp(new Send_UDP(ct.getMainActivity().serverAddr));
+                                ct.getMainActivity().PTT_UI();
+                            }
+                        });
                     }
                 }
                 else //There was an error
                 {
                     //Set Error Message in GUI window
-                   // this.ct.getCG().setStatus(m.getMessage());
                     Log.i(TAG,"Error getting our clientID");
+                    final String mesg = m.getMessage();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ct.getMainActivity().setText(0, mesg);
+                        }
+                    });
                 }
                 break;
             case 4:
@@ -100,11 +111,25 @@ public class Client_Convo extends Convo{
                 {
                     this.ct.set_priorityToken(true);
                     Log.i(TAG,"We Received Priority Token");
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ct.getMainActivity().getSend_Udp().startStreamingAudio();
+                            ct.getMainActivity().Transmit_UI();
+                        }
+                    });
                 }
                 else//We did not receive priority token
                 {
                     this.ct.set_priorityToken(false);//set flag to false
                     Log.i(TAG,"We Did Not Receive Priority Token");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ct.getMainActivity().setText(1, "Microphone Unavailable, try again");
+                        }
+                    });
                 }
                 break;
             case 5:

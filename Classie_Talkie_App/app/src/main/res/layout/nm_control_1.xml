@@ -43,5 +43,15 @@
             android:layout_marginTop="26dp"
             android:id="@+id/textView8"
             android:textSize="24sp" />
+
+        <TextView
+            android:text="..."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/mute_btn"
+            android:layout_alignStart="@+id/end_lan_btn1"
+            android:layout_marginTop="55dp"
+            android:id="@+id/nm_mesgStatus"
+            android:layout_alignEnd="@+id/shutdown_btn_1" />
     </RelativeLayout>
 </LinearLayout>

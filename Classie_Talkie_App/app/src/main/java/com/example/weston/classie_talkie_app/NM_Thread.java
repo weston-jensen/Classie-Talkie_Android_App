@@ -36,10 +36,14 @@ public class NM_Thread {
     private TCP_Sender tcp_sender;
     private TCP_Receiver tcp_receiver;
 
-    public NM_Thread()
+    private MainActivity ma;
+
+    public NM_Thread(MainActivity ma)
     {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        this.setMa(ma);
 
         //Initialize Message Queues
         this.setSendQueue(new LinkedList<String>());
@@ -239,5 +243,13 @@ public class NM_Thread {
 
     public void set_muteConvo(boolean _muteConvo) {
         this._muteConvo = _muteConvo;
+    }
+
+    public MainActivity getMainActivity() {
+        return ma;
+    }
+
+    public void setMa(MainActivity ma) {
+        this.ma = ma;
     }
 }

@@ -18,7 +18,7 @@ import java.util.LinkedList;
  * Created by Weston on 2/7/2017.
  */
 
-public class Client_Thread extends MainActivity{
+public class Client_Thread {
     private static String TAG = "AudioClient";
     //Todo
     /*
@@ -46,12 +46,15 @@ public class Client_Thread extends MainActivity{
 
     /*Flags*/
     private boolean isAuthenticated = false;
+    private MainActivity ma;
 
 
-    public Client_Thread()
+    public Client_Thread(MainActivity ma)
     {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        this.ma = ma;
         //Initialize Message Queues
         this.setSendQueue(new LinkedList<String>());
         this.setReceiveQueue(new LinkedList<Message>());
@@ -140,6 +143,10 @@ public class Client_Thread extends MainActivity{
         this._waitingToConnect = false;
     }
 
+    public MainActivity getMainActivity()
+    {
+        return ma;
+    }
 
     public Queue<String> getSendQueue() {
         return sendQueue;

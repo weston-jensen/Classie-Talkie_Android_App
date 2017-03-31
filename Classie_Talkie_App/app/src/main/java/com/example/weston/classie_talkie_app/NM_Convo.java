@@ -47,6 +47,13 @@ public class NM_Convo extends Convo {
                     this.nmt.setManagerID(m.getManagerID());
                     Log.i(TAG,"->NM is now connected with ManagerID: "+this.nmt.getManagerID());
                     this.nmt.set_authServerPw(true);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            nmt.getMainActivity().nm_lan_info_UI();
+                        }
+                    });
+
                 }
                 else //There was an error
                 {
@@ -60,17 +67,33 @@ public class NM_Convo extends Convo {
                 {
                     Log.i(TAG,"LAN was created");
                     this.nmt.set_setLanPw(true);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            nmt.getMainActivity().nm_control1_UI();
+                        }
+                    });
                 }
                 else//Server did not receive LAN password correctly
                 {
-
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            nmt.getMainActivity().setText(3,"Incorrect Server Password");
+                        }
+                    });
                 }
                 break;
             case 2:
                 //End LAN
                 if((m.getMesgStatus())>0)
                 {
-
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            nmt.getMainActivity().nm_lan_info_UI();
+                        }
+                    });
                 }
                 else
                 {
@@ -97,6 +120,12 @@ public class NM_Convo extends Convo {
             case 9:
                 //unMuteComm Ack Received
                 this.nmt.set_muteConvo(false);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        nmt.getMainActivity().setText(2,"Unable to Mute, try again");
+                    }
+                });
                 break;
             case 10:
 			/*
@@ -113,7 +142,12 @@ public class NM_Convo extends Convo {
                 }
                 else//Error getting data
                 {
-                    //this.nmt.getNm_gui().setStatus(m.getMessage());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            nmt.getMainActivity().setText(2,"Unable to Shutdown, try again");
+                        }
+                    });
                 }
                 break;
 
