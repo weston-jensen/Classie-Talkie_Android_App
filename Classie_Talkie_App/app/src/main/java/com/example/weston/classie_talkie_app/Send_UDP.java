@@ -22,10 +22,10 @@ import static android.media.AudioRecord.getMinBufferSize;
 public class Send_UDP{
     private static String TAG = "AudioClient";
     // the audio recording options
-    private static final int RECORDING_RATE = 44100; //44100
+    private static final int RECORDING_RATE = 44100;
     private static final int CHANNEL = AudioFormat.CHANNEL_IN_MONO;
     private static final int FORMAT = AudioFormat.ENCODING_PCM_16BIT;
-    private static int BUFFER_SIZE =  44100;//getMinBufferSize( RECORDING_RATE, CHANNEL, FORMAT);
+    private static int BUFFER_SIZE =  44100;
     private AudioRecord recorder;
     private boolean currentlySendingAudio = false;
     private static String SERVER;
@@ -79,21 +79,11 @@ public class Send_UDP{
                             AudioFormat.CHANNEL_IN_MONO,
                             AudioFormat.ENCODING_PCM_16BIT);
 
-                    /*recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
-                            RECORDING_RATE, CHANNEL, FORMAT, BUFFER_SIZE * 10);*/
-
                     recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
                             RECORDING_RATE,
                             AudioFormat.CHANNEL_IN_MONO,
                             AudioFormat.ENCODING_PCM_16BIT,
                             BUFFER_SIZE);
-
-
-
-                    //https://www.sinch.com/tutorials/android-app-to-app-voip-tutorial/
-
-
-                   // short[] buffer = new short[bufferSize / 2];
 
                    byte[] buffer = new byte[BUFFER_SIZE];
 
@@ -110,11 +100,12 @@ public class Send_UDP{
                         Log.e(TAG,"Could not start recording");
                         e.printStackTrace();
                     }
-
+                    socket.setSendBufferSize(BUFFER_SIZE); //try setting to something like 10000
+                    //socket.setSendBufferSize(BUFFER_SIZE/2);
                     while(currentlySendingAudio)
                     {
+                        //could try reducing
                         int read = recorder.read(buffer,0,buffer.length);
-                        System.out.println(read);
 
                         packet = new DatagramPacket(buffer, buffer.length, serverAddress,PORT);
                         socket.send(packet);
