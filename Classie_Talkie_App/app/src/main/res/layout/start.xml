@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
+    <TextView
+        android:text="Select User Type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView4"
+        android:fontFamily="casual"
+        android:textSize="24sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="29dp"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        android:textAlignment="center" />
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/background_dark">
+        android:layout_height="match_parent">
 
         <Button
             android:text="Student"
@@ -16,24 +27,13 @@
             android:layout_height="wrap_content"
             android:id="@+id/studentOption"
             android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="104dp"
+            android:layout_marginTop="114dp"
             android:height="100.0dp"
             android:width="125.0dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:onClick="doThis" />
-
-        <TextView
-            android:text="Select User Type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView4"
-            android:fontFamily="casual"
-            android:textSize="24sp"
+            android:onClick="doThis"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="29dp" />
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="21dp" />
 
         <Button
             android:text="Professor"
@@ -45,8 +45,6 @@
             android:height="100.0dp"
             android:layout_alignBaseline="@+id/studentOption"
             android:layout_alignBottom="@+id/studentOption"
-            android:layout_toEndOf="@+id/studentOption"
-            android:layout_marginStart="47dp" />
-
+            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 </LinearLayout>

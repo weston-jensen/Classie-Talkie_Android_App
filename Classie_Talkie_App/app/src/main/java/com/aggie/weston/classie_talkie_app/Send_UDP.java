@@ -1,4 +1,4 @@
-package com.example.weston.classie_talkie_app;
+package com.aggie.weston.classie_talkie_app;
 
 import android.app.Activity;
 import android.media.AudioFormat;
@@ -25,7 +25,7 @@ public class Send_UDP{
     private static final int RECORDING_RATE = 44100;
     private static final int CHANNEL = AudioFormat.CHANNEL_IN_MONO;
     private static final int FORMAT = AudioFormat.ENCODING_PCM_16BIT;
-    private static int BUFFER_SIZE =  44100;
+    private static int BUFFER_SIZE =  4410;
     private AudioRecord recorder;
     private boolean currentlySendingAudio = false;
     private static String SERVER;

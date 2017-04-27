@@ -1,4 +1,4 @@
-package com.example.weston.classie_talkie_app;
+package com.aggie.weston.classie_talkie_app;
 
 import android.support.annotation.MainThread;
 import android.util.Log;

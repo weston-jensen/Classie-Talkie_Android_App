@@ -1,4 +1,4 @@
-package com.example.weston.classie_talkie_app;
+package com.aggie.weston.classie_talkie_app;
 
 import org.json.JSONObject;
 
